@@ -1,0 +1,5 @@
+.sonarlint
+.vscode
+__pycache__
+envs/__pycache__
+exclude
