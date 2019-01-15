@@ -12,7 +12,6 @@ for i_episode in range(10):
               " Episode number " + str(i_episode) + " --- \n")
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
-        print(info)
         print("Utility(sums of rewards) = " + str(reward))
         print("Done = " + str(done))
         env.render()

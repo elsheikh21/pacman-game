@@ -4,7 +4,6 @@ import numpy as np
 
 # 3rd party modules
 import gym
-import game_logic
 from gym import spaces, logger
 
 
@@ -54,13 +53,13 @@ class PacmanEnv(gym.Env):
 
         # Fixed position for some walls
         for i in range(9):
-            self.grid[0][i] = 1
-            self.grid[8][i] = 1
+            self.grid[0][i] = 2
+            self.grid[8][i] = 2
 
-        self.grid[1][0] = 1
-        self.grid[1][8] = 1
-        self.grid[7][0] = 1
-        self.grid[7][8] = 1
+        self.grid[1][0] = 2
+        self.grid[1][8] = 2
+        self.grid[7][0] = 2
+        self.grid[7][8] = 2
 
         # Total food pieces pacman has to eat
         # (number of cells 9 * 9) - number of other elements
@@ -98,6 +97,14 @@ class PacmanEnv(gym.Env):
                     (raw_index != 4 and col_index != 4)):
                 self.grid[raw_index][col_index] = 2
 
+        # Special food locations (randomly)
+        for i in range(self.special_food):
+            raw_index = random.randint(1, 7)
+            col_index = random.randint(0, 8)
+            if (self.grid[raw_index][col_index] == 0 and
+                    (raw_index != 4 and col_index != 4)):
+                self.grid[raw_index][col_index] = 11
+
         # Reward {Check method documentation}
         self.reward = 0
         # Utility function
@@ -120,7 +127,7 @@ class PacmanEnv(gym.Env):
         4a. Ghost, PC not powered up
         4b. Ghost, PC is powered up
         '''
-
+        reward = 0
         # PC Moving upwards
         if(action == 0):
             current_row = self.state[0]
@@ -179,7 +186,7 @@ class PacmanEnv(gym.Env):
                         # Game is not over yet
                         game_over = False
 
-                    # If this is last episode then disable power up & reset counter
+                    # If last episode then disable power up & reset counter
                     else:
                         self.special_power = 0
                         self.specialPowerCounter = 0
@@ -532,35 +539,45 @@ class PacmanEnv(gym.Env):
         return np.array(self.state), reward, game_over, self.grid
 
     def render(self, mode='human'):
+        '''
+        Map Values:
+            - 0     food piece to eat
+            - 1     ghosts
+            - 2     walls
+            - 3     eaten food piece
+            - 9     Pacman
+            - 11    special food piece
+        '''
+
         grid = self.grid
-        ris = str("")
+        grid_world = str("")
         for i in range(9):
-            ris = ris + "[  "
+            grid_world += "[  "
             for k in range(9):
                 # food
                 if (grid[i][k] == 0):
-                    ris = ris + ".   "
+                    grid_world += ".   "
                 # Special food
                 elif (grid[i][k] == 11):
-                    ris = ris + "0   "
+                    grid_world += "0   "
                 # Ghost
                 elif (grid[i][k] == 1):
-                    ris = ris + "G   "
+                    grid_world += "G   "
                 # pacman
                 elif (grid[i][k] == 9):
                     if(self.special_power == 1):
-                        ris = ris + "P   "
+                        grid_world += "PC  "
                     else:
-                        ris = ris + "p   "
+                        grid_world += "pc  "
                 # Food eaten
                 elif (grid[i][k] == 3):
-                    ris = ris + "-   "
+                    grid_world += "   "
                 # Wall
                 else:
-                    ris = ris + "|   "
+                    grid_world += "X   "
 
-            ris = ris + "]" + '\n'
-        print(ris)
+            grid_world += "]" + '\n'
+        print(grid_world)
         # counter = 0
         # word = ''
         # for row in self.grid:
