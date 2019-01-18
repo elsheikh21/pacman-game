@@ -139,7 +139,7 @@ class PacmanEnv(gym.Env):
         '''
 
         grid = self.grid
-        grid_str = np.array2string(grid).replace('0', ".   ").replace(
+        grid_str = np.array2string(grid).replace('0', "F   ").replace(
             '11',  "SF   ").replace('1', "G   ").replace(
                 '3', "    ").replace('2', "X   ")
         if(self.special_power == 1):
