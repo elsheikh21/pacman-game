@@ -5,7 +5,8 @@ import numpy as np
 import gym
 from gym import spaces
 from game_logic import (move_right_scenario, move_left_scenario,
-                        move_up_scenario, move_down_scenario)
+                        move_up_scenario, move_down_scenario,
+                        legal_actions_set)
 
 
 class PacmanEnv(gym.Env):
@@ -87,6 +88,11 @@ class PacmanEnv(gym.Env):
 
         # Number of actions (up, right, bottom, left)
         self.action_space = spaces.Discrete(4)
+        # Number of observations/states = no of possible/legal states ()
+        # multiplied by the no of actions (4)
+        # 10x10(all possible locations) - 36 (wall locations)
+        # 64 possible state
+        self.observation_space = spaces.Discrete(64)
 
     def step(self, action):
         '''
@@ -112,8 +118,8 @@ class PacmanEnv(gym.Env):
         - reward = 1000    -> Pacman finished all food pieces.
 
         '''
+        legal_actions_set(self)
         reward = 0
-        # game_over = False
         # PC Moving upwards
         if(action == 0):
             return move_up_scenario(self, reward)

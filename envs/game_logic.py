@@ -1,6 +1,25 @@
 import numpy as np
 
 
+def legal_actions_set(self):
+    current_row = self.state[0]
+    current_col = self.state[1]
+    legal_actions = ['up', 'right', 'down', 'left']
+    if(self.grid[current_row-1][current_col] == 2):
+        legal_actions.remove('up')
+    if(self.grid[current_row][current_col+1] == 2):
+        legal_actions.remove('right')
+    if(self.grid[current_row+1][current_col] == 2):
+        legal_actions.remove('down')
+    if(self.grid[current_row][current_col-1] == 2):
+        legal_actions.remove('left')
+
+    current_state = np.array([current_row, current_col])
+    actions = " ".join(str(action) for action in legal_actions)
+    print('In this state {}, set of possible actions are {}'.format(
+        current_state, actions))
+
+
 def special_power_scenario(self):
     if(self.special_power == 1):
         self.special_power_counter += 1
@@ -135,7 +154,7 @@ def move_down_scenario(self, reward):
     grid_now = self.grid[current_row+1][current_col]
     print('Action: agent moving downwards')
     # PC is fed up, and wants to commit suicide
-    if(current_row + 1 > 8):
+    if(current_row + 1 > 9):
         special_power_scenario(self)
         # print('Cannot move out of the grid.')
         self.state = [current_row, current_col]
@@ -254,7 +273,7 @@ def move_right_scenario(self, reward):
     grid_now = self.grid[current_row][current_col+1]
     print('Action: agent moving right')
     # PC is fed up, and wants to commit suicide
-    if(current_row + 1 > 8):
+    if(current_col + 1 > 9):
         special_power_scenario(self)
         # print('Cannot move out of the grid.')
         self.state = [current_row, current_col]
@@ -377,7 +396,7 @@ def move_left_scenario(self, reward):
     grid_now = self.grid[current_row][current_col-1]
     print('Action: agent moving left')
     # PC is fed up, and wants to commit suicide
-    if(current_row - 1 < 0):
+    if(current_col - 1 < 0):
         special_power_scenario(self)
         # print('Cannot move out of the grid.')
         self.state = [current_row, current_col]

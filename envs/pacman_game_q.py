@@ -2,8 +2,6 @@ import numpy as np
 import gym
 import time
 
-# TODO: To implement Q-Learning
-
 env = gym.make('MyPacman-v0')
 observations = env.reset()
 env.render()
@@ -11,7 +9,7 @@ env.render()
 print("Action space is: {}".format(env.action_space))
 print("State space is: {}".format(env.observation_space))
 
-# # First, we'll initialize the Q-table state space x 4 matrix of zeros
+# First, we'll initialize the Q-table state space x 4 matrix of zeros
 q_table = np.zeros([env.observation_space, env.action_space])
 
 # Alpha (α): (the learning rate) should decrease as you continue to gain a

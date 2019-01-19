@@ -4,8 +4,6 @@ import time
 env = gym.make('MyPacman-v0')
 observations = env.reset()
 
-print("Action space is: {}".format(env.action_space))
-
 for game in range(100):
     print("\n**************************************************************")
     state = env.reset()
@@ -25,7 +23,6 @@ for game in range(100):
             print("Episode done after {} timesteps.\n".format(t+1))
             break
     print("**************************************************************\n")
-
 
 # env.reset() Resets the environment and returns a random initial state.
 # env.render() Renders one frame of the environment (to visualizing env)
