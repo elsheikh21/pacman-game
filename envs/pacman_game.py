@@ -4,6 +4,14 @@ import time
 env = gym.make('MyPacman-v0')
 observations = env.reset()
 
+# https://www.learndatasci.com/tutorials/reinforcement-q-learning-scratch-python-openai-gym/
+# https://softwareengineering.stackexchange.com/questions/190876/i-dont-understand-value-iteration
+# https://github.com/dennybritz/reinforcement-learning/blob/master/DP/Value%20Iteration%20Solution.ipynb
+# https://github.com/dennybritz/reinforcement-learning/blob/master/DP/Value%20Iteration.ipynb
+# https://medium.freecodecamp.org/an-introduction-to-q-learning-reinforcement-learning-14ac0b4493cc
+# https://medium.freecodecamp.org/a-brief-introduction-to-reinforcement-learning-7799af5840db
+
+
 for game in range(100):
     print("\n**************************************************************")
     state = env.reset()

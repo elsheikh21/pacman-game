@@ -10,7 +10,7 @@ print("Action space is: {}".format(env.action_space))
 print("State space is: {}".format(env.observation_space))
 
 # First, we'll initialize the Q-table state space x 4 matrix of zeros
-q_table = np.zeros([env.observation_space, env.action_space])
+q_table = np.zeros([env.observation_space.n, env.action_space.n])
 
 # Alpha (α): (the learning rate) should decrease as you continue to gain a
 # larger and larger knowledge base.
@@ -28,12 +28,11 @@ q_table = np.zeros([env.observation_space, env.action_space])
 # This is done simply by using the epsilon, and comparing to
 # random.uniform(0, 1)
 
-# https://www.learndatasci.com/tutorials/reinforcement-q-learning-scratch-python-openai-gym/
-# https://www.youtube.com/watch?v=ViwBAK8Hd7Q&list=PL-9x0_FO_lglnlYextpvu39E7vWzHhtNO&index=3
-
 alpha = 0.1
 gamma = 0.6
 epsilon = 0.1
+
+utilities = []
 
 for game in range(100):
     print("\n**************************************************************")
@@ -41,8 +40,9 @@ for game in range(100):
     state = env.reset()
     for t in range(1000):
         print(
-            "\n--- Step #{} - Episode #{} ---\n".format(t, game))
+            "\n--- Step #{} - Game #{} ---\n".format(t, game))
         if (epsilon > np.random.uniform(0, 1)):
+            random_action = True
             action = env.action_space.sample()
         else:
             # Exploit the learned value
@@ -57,20 +57,46 @@ for game in range(100):
         new_value = (1 - alpha) * old_value + alpha * \
             (reward + gamma * next_max)
         q_table[state, action] = new_value
+
         utility += reward
 
         state = next_state
 
         print("\n--- Utility (sum of rewards) = {} ---\n".format(str(utility)))
         print("--- Game Over = {} ---\n".format(str(done)))
-        env.render()
+        # env.render()
         time.sleep(1.0)
-        print("\n-------------------------------------------")
+        # print("\n-------------------------------------------")
         if (done):
             print("Episode done after {} timesteps.\n".format(t+1))
             break
     print("**************************************************************\n")
+    utilities.append(utility)
 
+print(utilities.index(max(utilities)))
+print(q_table)
+
+# Evaluate agent's performance after Q-learning
+
+episodes = 100
+total_epochs = 0
+
+for _ in range(episodes):
+    state = env.reset()
+    epochs, reward = 0, 0
+
+    done = False
+
+    while not done:
+        action = np.argmax(q_table[state])
+        state, reward, done, info = env.step(action)
+
+        epochs += 1
+
+    total_epochs += epochs
+
+print(f"Results after {episodes} episodes:")
+print(f"Average timesteps per episode: {total_epochs / episodes}")
 
 # env.reset() Resets the environment and returns a random initial state.
 # env.render() Renders one frame of the environment (to visualizing env)
@@ -78,10 +104,10 @@ for game in range(100):
 # Action space: set of all the actions that agent can take in a given state.
 
 # env.step(action): Step the environment by one timestep. Returns
-    # observation: Observations of the environment
-    # reward: If your action was beneficial or not
-    # done: Indicates if game terminated, also called one episode
-    # info: Additional info such as performance & latency for debugging
+# observation: Observations of the environment
+# reward: If your action was beneficial or not
+# done: Indicates if game terminated, also called one episode
+# info: Additional info such as performance & latency for debugging
 
 
 # Q-Learning Process
