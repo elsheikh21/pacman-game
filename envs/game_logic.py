@@ -67,7 +67,7 @@ def move_up_scenario(self, reward):
         # No updates to the state of course nor the grid,
         # nor reward, nor game ended
         self.state = [current_row, current_col]
-        reward += 0
+        reward += -5
         game_over = False
     # There is a ghost
     elif(grid_now == 1):
@@ -186,7 +186,7 @@ def move_down_scenario(self, reward):
         # No updates to the state of course nor the grid,
         # nor reward, nor game ended
         self.state = [current_row, current_col]
-        reward += 0
+        reward += -5
         game_over = False
     # There is a ghost
     elif(grid_now == 1):
@@ -307,7 +307,7 @@ def move_right_scenario(self, reward):
         # No updates to the state of course nor the grid,
         # nor reward, nor game ended
         self.state = [current_row, current_col]
-        reward += 0
+        reward += -5
         game_over = False
 
     # There is a ghost
@@ -430,7 +430,7 @@ def move_left_scenario(self, reward):
         # No updates to the state of course nor the grid,
         # nor reward, nor game ended
         self.state = [current_row, current_col]
-        reward += 0
+        reward += -5
         game_over = False
 
     # There is a ghost

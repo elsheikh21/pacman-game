@@ -34,13 +34,13 @@ epsilon = 0.1
 
 utilities = []
 
-for game in range(100):
+for game in range(10000):
     print("\n**************************************************************")
     utility = 0
     state = env.reset()
+    eps = 1.0/np.sqrt(game+1)
     for t in range(1000):
-        print(
-            "\n--- Step #{} - Game #{} ---\n".format(t, game))
+        print("\n--- Step #{} - Game #{} ---\n".format(t, game))
         if (epsilon > np.random.uniform(0, 1)):
             random_action = True
             action = env.action_space.sample()
@@ -62,19 +62,15 @@ for game in range(100):
 
         state = next_state
 
-        print("\n--- Utility (sum of rewards) = {} ---\n".format(str(utility)))
-        print("--- Game Over = {} ---\n".format(str(done)))
-        # env.render()
+        print("\n--- Utility = {} - Game Over = {} ---".format(utility, done))
+        env.render()
         time.sleep(1.0)
-        # print("\n-------------------------------------------")
+        print("\n-------------------------------------------")
         if (done):
             print("Episode done after {} timesteps.\n".format(t+1))
             break
     print("**************************************************************\n")
     utilities.append(utility)
-
-print(utilities.index(max(utilities)))
-print(q_table)
 
 # Evaluate agent's performance after Q-learning
 
@@ -86,17 +82,19 @@ for _ in range(episodes):
     epochs, reward = 0, 0
 
     done = False
+    utility = 0
 
     while not done:
         action = np.argmax(q_table[state])
         state, reward, done, info = env.step(action)
-
+        utility += reward
         epochs += 1
 
     total_epochs += epochs
 
 print(f"Results after {episodes} episodes:")
 print(f"Average timesteps per episode: {total_epochs / episodes}")
+print(f"Utility: {utility}")
 
 # env.reset() Resets the environment and returns a random initial state.
 # env.render() Renders one frame of the environment (to visualizing env)
