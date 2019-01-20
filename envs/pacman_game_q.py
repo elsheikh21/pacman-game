@@ -42,13 +42,11 @@ for game in range(10000):
     for t in range(1000):
         print("\n--- Step #{} - Game #{} ---\n".format(t, game))
         if (epsilon > np.random.uniform(0, 1)):
-            random_action = True
             action = env.action_space.sample()
         else:
             # Exploit the learned value
             action = np.argmax(q_table[state])
 
-        action = env.action_space.sample()
         next_state, reward, done, info = env.step(action)
 
         old_value = q_table[state, action]
