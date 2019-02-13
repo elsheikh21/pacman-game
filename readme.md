@@ -66,11 +66,9 @@
   - nothing
   - Ghosts (PC not powered up, or, PC is powered up)
 
-- Rewards (8):
+- Rewards (6):
 
-  - reward = -1 -> Stepping rewards
   - reward = -1000 -> Pacman is killed by a ghost,
-  - reward = -5 -> Pacman is bumping in wall,
   - reward = 0 -> Pacman is alive,
   - reward = 10 -> Pacman eats a food piece,
   - reward = 50 -> Pacman eats a special

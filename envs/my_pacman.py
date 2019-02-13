@@ -111,10 +111,8 @@ class PacmanEnv(gym.Env):
         4b. Ghost, PC is powered up
 
 
-        Rewards (8):
-        - reward = -1       -> Stepping rewards
+        Rewards (6):
         - reward = -1000   -> Pacman is killed by a ghost,
-        - reward = -5       -> Pacman is bumping in wall,
         - reward = 0       -> Pacman is alive,
         - reward = 10      -> Pacman eats a food piece,
         - reward = 50     -> Pacman eats a special
@@ -124,8 +122,8 @@ class PacmanEnv(gym.Env):
         '''
         legal_actions_set(self)
         # Penalty for every step the agent makes
-        reward = -1
         # PC Moving upwards
+        reward = 0
         if(action == 0):
             return move_up_scenario(self, reward)
         # PC Moving downwards

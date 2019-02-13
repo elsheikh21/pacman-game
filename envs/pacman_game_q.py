@@ -18,13 +18,13 @@ def train_agent(iterations=1000, verbose=False,
         print(f"\nAction space: {action_space} & State space: {obs_space} \n")
 
     # Define Q-Learning attributes
-
+    '''
     action_size = action_space.n
     state_size = obs_space.n
     q_table = np.zeros([state_size, action_size], dtype=np.float)
-
+    '''
     # retraining the trained model
-    # q_table = np.load('q_table.npy')
+    q_table = np.load('q_table.npy')
 
     # for states mapping
     states_list = map_states()
@@ -70,7 +70,7 @@ def train_agent(iterations=1000, verbose=False,
         if game % 100 == 0:
             print_out(utilities, q_table)
 
-    return q_table, utilites
+    return q_table, utilities
 
 
 def print_out(utilities, q_table):
@@ -79,7 +79,7 @@ def print_out(utilities, q_table):
     '''
     with open('output.txt', 'w') as f:
         max_idx = utilities.index(max(utilities))
-        print(utilites[max_idx], file=f)
+        print(utilities[max_idx], file=f)
         print(q_table, file=f)
     print('[INFO] data is saved to output.txt')
 
