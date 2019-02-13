@@ -8,6 +8,10 @@
 
 ---
 
+[Expected output for the grid](docs/random_agent_output.py)
+
+---
+
 ## Starters
 
 - [For installation and getting started](docs/installation.md)
@@ -102,3 +106,5 @@
 
 </p>
 </details>
+
+---
