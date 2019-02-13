@@ -1,43 +1,32 @@
 # Pacman Game
 
-## How to get started
+## Goal
 
-1. Access the following directory
-   - `C:\Users\<user name>\AppData\Local\Programs\Python\Python<version>\Lib`
-2. make a new directory and name it `gym` (or whatever)
-3. git clone https://github.com/openai/gym.git
-4. cd gym
-   - `current directory is C:\Users\<user name>\AppData\Local\Programs\Python\Python<version>\Lib\gym\gym`
-5. `pip install -e .`
-6. access `__init__.py` file in
-   - `C:\Users\<username>\AppData\Local\Programs\Python\Python<version>\Lib\gym\gym\gym\envs`
-7. Add to it the following code, save and exit
-
-   ```
-   register(
-        id='MyPacman-v0',
-        entry_point='gym.envs.classic_control:PacmanEnv',
-        max_episode_steps=200,
-        reward_threshold=4000,
-   )
-   ```
-
-8. Access `classic_control` folder, and open the `__init__.py` file inside of it
-9. Add to it the following line
-   ```
-   from gym.envs.classic_control.my_pacman import PacmanEnv
-   ```
-10. Add the following files to it,
-
-    - `game_logic.py`
-    - `pacman_game.py`
-    - `my_pacman.py`
-
-11. run `python -u pacman_game.py`
+1. Build customized pacman game using native python libraries, and openai gym, [my_pacman.py](envs/my_pacman.py)
+2. Develop a random agent, implemented [pacman_game.py](envs/pacman_game.py)
+3. Develop another agent that uses `Value Iteration` to achieve max utility, implemented here [pacman_game_q.py](envs/pacman_game.py)
 
 ---
 
-## Initialize the game
+## Starters
+
+- [For installation and getting started](docs/installation.md)
+
+- [Intro to Markov Decision Process](docs/Markov_Decision_Process.md)
+
+- [Intro to Reinforcement learning](docs/RL_Intro.md)
+
+- [Intro to Q Learning](docs/Q_Learning.md)
+
+- [Methods from Openai gym api](docs/about_openai_gym_methods.md)
+
+---
+
+## All about My Pacman
+
+<details>
+<summary>Initialize the game</summary>
+<p>
 
 - Creating a 10X10 grid environment,
 - Pacman starting position in the middle (approximately) {5, 4}.
@@ -50,9 +39,14 @@
   - starting reward of 0,
   - utility functions of 0.
 
+</p>
+</details>
+
 ---
 
-## Agent Actions
+<details>
+<summary>Agent Actions & Rewards</summary>
+<p>
 
 - Actions (Discrete 4):
 
@@ -68,18 +62,25 @@
   - nothing
   - Ghosts (PC not powered up, or, PC is powered up)
 
-- Rewards (6):
+- Rewards (8):
 
-  - reward = 0 -> Pacman is alive,
+  - reward = -1 -> Stepping rewards
   - reward = -1000 -> Pacman is killed by a ghost,
+  - reward = -5 -> Pacman is bumping in wall,
+  - reward = 0 -> Pacman is alive,
   - reward = 10 -> Pacman eats a food piece,
   - reward = 50 -> Pacman eats a special
   - reward = 100 -> Pacman eats a ghost
   - reward = 1000 -> Pacman finished all food pieces.
 
+</p>
+</details>
+
 ---
 
-## Rendering the game
+<details>
+<summary>Game Rendering</summary>
+<p>
 
 - Map Values:
 
@@ -98,3 +99,6 @@
   - Eaten food pieces " "
   - Powered Up pacman "PC"
   - Normal pacman "pc"
+
+</p>
+</details>

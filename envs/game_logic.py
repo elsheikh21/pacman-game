@@ -1,7 +1,33 @@
 import numpy as np
 
 
-def legal_actions_set(self):
+def map_states():
+    '''
+    Creating a list of all possible positions of
+    the pacman.
+    '''
+
+    states_lst = []
+
+    for i in range(1, 9):
+        for j in range(1, 9):
+            sub_lst = np.array([i, j])
+            states_lst.append(sub_lst)
+
+    return states_lst
+
+
+def get_state_mapping(state, states_list):
+    if(not (type(state) is list)):
+        sstate = state.tolist()
+    else:
+        sstate = state
+    vectors = [s.tolist() for s in states_list]
+    vector = vectors.index(sstate)
+    return vector
+
+
+def legal_actions_set(self, verbose=False):
     current_row = self.state[0]
     current_col = self.state[1]
     legal_actions = ['up', 'right', 'down', 'left']
@@ -16,8 +42,9 @@ def legal_actions_set(self):
 
     current_state = np.array([current_row, current_col])
     actions = " ".join(str(action) for action in legal_actions)
-    print('In this state {}, set of possible actions are {}'.format(
-        current_state, actions))
+    if(verbose):
+        print('In this state {}, set of possible actions are {}'.format(
+            current_state, actions))
 
 
 def special_power_scenario(self):
@@ -29,22 +56,23 @@ def special_power_scenario(self):
 
 
 def move_up_scenario(self, reward):
+    states_list = map_states()
     game_over = False
     current_row = self.state[0]
     current_col = self.state[1]
     grid_now = self.grid[current_row-1][current_col]
-    print('Action: agent moving upwards')
+    # print('Action: agent moving upwards')
     # PC is fed up, and wants to commit suicide
     if(current_row - 1 < 0):
         special_power_scenario(self)
-        # print('Cannot move out of the grid.')
+        # # print('Cannot move out of the grid.')
         self.state = np.array([current_row, current_col])
         reward += 0
         game_over = False
     # PC is running into a food piece to eat
     elif(grid_now == 0):
         special_power_scenario(self)
-        print('[INFO] agent ate food piece.')
+        # print('[INFO] agent ate food piece.')
         # PC ate the food piece, replace it with an empty piece
         grid_now = 3
         # Since we moved up, we decrement our rows count
@@ -63,7 +91,7 @@ def move_up_scenario(self, reward):
     # There is a wall
     elif(grid_now == 2):
         special_power_scenario(self)
-        print('[INFO] Bumping into the wall.')
+        # print('[INFO] Bumping into the wall.')
         # No updates to the state of course nor the grid,
         # nor reward, nor game ended
         self.state = [current_row, current_col]
@@ -77,7 +105,7 @@ def move_up_scenario(self, reward):
             self.special_power_counter += 1
             # if PC is still powered up
             if(self.special_power_counter > self.special_power_duration):
-                print('[INFO] agent killed a ghost.')
+                # print('[INFO] agent killed a ghost.')
                 # Since we moved up, we decrement our rows count
                 current_row -= 1
                 self.state = [current_row, current_col]
@@ -100,7 +128,7 @@ def move_up_scenario(self, reward):
         # Second scenario, poor PC is not powered UP,
         # RIP Mr. Pacman
         else:
-            print('[GAME OVER] Agent died. \n')
+            # print('[GAME OVER] Agent died. \n')
             # No need to update the state or the grid
             self.grid[current_row, current_col+1] = float(3.0)
             reward -= 1000
@@ -108,7 +136,7 @@ def move_up_scenario(self, reward):
     # There is a powering up food piece
     elif(grid_now == 11):
         special_power_scenario(self)
-        print('[INFO] agent is on steroids.')
+        # print('[INFO] agent is on steroids.')
         # PC ate the food piece, replace it with an empty piece
         grid_now = 3
         # Make PC powered up
@@ -144,26 +172,30 @@ def move_up_scenario(self, reward):
         reward += 1000
         game_over = True
         self.state[current_row][current_col]
-    return np.array([self.state]), reward, game_over, self.grid
+
+    state_idx = get_state_mapping(self.state, states_list)
+
+    return state_idx, self.state, reward, game_over
 
 
 def move_down_scenario(self, reward):
+    states_list = map_states()
     game_over = False
     current_row = self.state[0]
     current_col = self.state[1]
     grid_now = self.grid[current_row+1][current_col]
-    print('Action: agent moving downwards')
+    # print('Action: agent moving downwards')
     # PC is fed up, and wants to commit suicide
     if(current_row + 1 > 9):
         special_power_scenario(self)
-        # print('Cannot move out of the grid.')
+        # # print('Cannot move out of the grid.')
         self.state = [current_row, current_col]
         reward += 0
         game_over = False
     # PC is running into a food piece to eat
     elif(grid_now == 0):
         special_power_scenario(self)
-        print('[INFO] agent ate food piece.')
+        # print('[INFO] agent ate food piece.')
         # PC ate the food piece, replace it with an empty piece
         grid_now = 3
         # Since we moved up, we decrement our rows count
@@ -182,7 +214,7 @@ def move_down_scenario(self, reward):
     # There is a wall
     elif(grid_now == 2):
         special_power_scenario(self)
-        print('[INFO] Bumping into the wall.')
+        # print('[INFO] Bumping into the wall.')
         # No updates to the state of course nor the grid,
         # nor reward, nor game ended
         self.state = [current_row, current_col]
@@ -196,7 +228,7 @@ def move_down_scenario(self, reward):
             self.special_power_counter += 1
             # if PC is still powered up
             if(self.special_power_counter > self.special_power_duration):
-                print('[INFO] agent killed a ghost.')
+                # print('[INFO] agent killed a ghost.')
                 # Since we moved up, we decrement our rows count
                 current_row += 1
                 self.state = [current_row, current_col]
@@ -219,7 +251,7 @@ def move_down_scenario(self, reward):
         # Second scenario, poor PC is not powered UP,
         # RIP Mr. Pacman
         else:
-            print('[GAME OVER] Agent died \n')
+            # print('[GAME OVER] Agent died \n')
             # No need to update the state or the grid
             self.grid[current_row, current_col+1] = float(3.0)
             reward -= 1000
@@ -227,7 +259,7 @@ def move_down_scenario(self, reward):
     # There is a powering up food piece
     elif(grid_now == 11):
         special_power_scenario(self)
-        print('[INFO] agent is on steroids.')
+        # print('[INFO] agent is on steroids.')
         # PC ate the food piece, replace it with an empty piece
         grid_now = 3
         # Make PC powered up
@@ -263,19 +295,23 @@ def move_down_scenario(self, reward):
         reward += 1000
         game_over = True
         self.state[current_row][current_col]
-    return np.array([self.state]), reward, game_over, self.grid
+
+    state_idx = get_state_mapping(self.state, states_list)
+
+    return state_idx, self.state, reward, game_over
 
 
 def move_right_scenario(self, reward):
+    states_list = map_states()
     game_over = False
     current_row = self.state[0]
     current_col = self.state[1]
     grid_now = self.grid[current_row][current_col+1]
-    print('Action: agent moving right')
+    # print('Action: agent moving right')
     # PC is fed up, and wants to commit suicide
     if(current_col + 1 > 9):
         special_power_scenario(self)
-        # print('Cannot move out of the grid.')
+        # # print('Cannot move out of the grid.')
         self.state = [current_row, current_col]
         reward += 0
         game_over = False
@@ -283,7 +319,7 @@ def move_right_scenario(self, reward):
     # PC is running into a food piece to eat
     elif(grid_now == 0):
         special_power_scenario(self)
-        print('[INFO] agent ate food piece.')
+        # print('[INFO] agent ate food piece.')
         # PC ate the food piece, replace it with an empty piece
         grid_now = 3
         # Since we moved up, we decrement our rows count
@@ -303,7 +339,7 @@ def move_right_scenario(self, reward):
     # There is a wall
     elif(grid_now == 2):
         special_power_scenario(self)
-        print('[INFO] Bumping into the wall.')
+        # print('[INFO] Bumping into the wall.')
         # No updates to the state of course nor the grid,
         # nor reward, nor game ended
         self.state = [current_row, current_col]
@@ -318,7 +354,7 @@ def move_right_scenario(self, reward):
             self.special_power_counter += 1
             # if PC is still powered up
             if(self.special_power_counter > self.special_power_duration):
-                print('[INFO] agent killed a ghost.')
+                # print('[INFO] agent killed a ghost.')
                 # Since we moved up, we decrement our rows count
                 current_col += 1
                 self.state = [current_row, current_col]
@@ -341,7 +377,7 @@ def move_right_scenario(self, reward):
         # Second scenario, poor PC is not powered UP,
         # RIP Mr. Pacman
         else:
-            print('[GAME OVER] Agent died \n')
+            # print('[GAME OVER] Agent died \n')
             # No need to update the state or the grid
             self.grid[current_row, current_col+1] = float(3.0)
             reward -= 1000
@@ -349,7 +385,7 @@ def move_right_scenario(self, reward):
     # There is a powering up food piece
     elif(grid_now == 11):
         special_power_scenario(self)
-        print('[INFO] agent is on steroids.')
+        # print('[INFO] agent is on steroids.')
         # PC ate the food piece, replace it with an empty piece
         grid_now = 3
         # Make PC powered up
@@ -386,19 +422,23 @@ def move_right_scenario(self, reward):
         reward += 1000
         game_over = True
         self.state[current_row][current_col]
-    return np.array([self.state]), reward, game_over, self.grid
+
+    state_idx = get_state_mapping(self.state, states_list)
+
+    return state_idx, self.state, reward, game_over
 
 
 def move_left_scenario(self, reward):
+    states_list = map_states()
     game_over = False
     current_row = self.state[0]
     current_col = self.state[1]
     grid_now = self.grid[current_row][current_col-1]
-    print('Action: agent moving left')
+    # print('Action: agent moving left')
     # PC is fed up, and wants to commit suicide
     if(current_col - 1 < 0):
         special_power_scenario(self)
-        # print('Cannot move out of the grid.')
+        # # print('Cannot move out of the grid.')
         self.state = [current_row, current_col]
         reward += 0
         game_over = False
@@ -406,7 +446,7 @@ def move_left_scenario(self, reward):
     # PC is running into a food piece to eat
     elif(grid_now == 0):
         special_power_scenario(self)
-        print('[INFO] agent ate food piece.')
+        # print('[INFO] agent ate food piece.')
         # PC ate the food piece, replace it with an empty piece
         grid_now = 3
         # Since we moved up, we decrement our rows count
@@ -426,7 +466,7 @@ def move_left_scenario(self, reward):
     # There is a wall
     elif(grid_now == 2):
         special_power_scenario(self)
-        print('[INFO] Bumping into the wall.')
+        # print('[INFO] Bumping into the wall.')
         # No updates to the state of course nor the grid,
         # nor reward, nor game ended
         self.state = [current_row, current_col]
@@ -441,7 +481,7 @@ def move_left_scenario(self, reward):
             self.special_power_counter += 1
             # if PC is still powered up
             if(self.special_power_counter > self.special_power_duration):
-                print('[INFO] agent is on steroids.')
+                # print('[INFO] agent is on steroids.')
                 # Since we moved up, we decrement our rows count
                 current_col -= 1
                 self.state = [current_row, current_col]
@@ -464,7 +504,7 @@ def move_left_scenario(self, reward):
         # Second scenario, poor PC is not powered UP,
         # RIP Mr. Pacman
         else:
-            print('[GAME OVER] Agent died \n')
+            # print('[GAME OVER] Agent died \n')
             # No need to update the state or the grid
             # Update the grid with remove old pacman position
             self.grid[current_row, current_col+1] = float(3.0)
@@ -474,7 +514,7 @@ def move_left_scenario(self, reward):
     # There is a powering up food piece
     elif(grid_now == 11):
         special_power_scenario(self)
-        print('[INFO] agent is on steroids.')
+        # print('[INFO] agent is on steroids.')
         # PC ate the food piece, replace it with an empty piece
         grid_now = 3
         # Make PC powered up
@@ -511,4 +551,7 @@ def move_left_scenario(self, reward):
         reward += 1000
         game_over = True
         self.state[current_row][current_col]
-    return np.array([self.state]), reward, game_over, self.grid
+
+    state_idx = get_state_mapping(self.state, states_list)
+
+    return state_idx, self.state, reward, game_over

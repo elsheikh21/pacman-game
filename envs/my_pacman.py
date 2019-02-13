@@ -1,12 +1,12 @@
-# core modules
-import numpy as np
-
-# 3rd party modules
 import gym
 from gym import spaces
-from game_logic import (move_right_scenario, move_left_scenario,
-                        move_up_scenario, move_down_scenario,
-                        legal_actions_set)
+
+import numpy as np
+
+from game_logic import (legal_actions_set, move_down_scenario,
+                        move_left_scenario, move_right_scenario,
+                        move_up_scenario)
+from game_logic import map_states, get_state_mapping
 
 
 class PacmanEnv(gym.Env):
@@ -91,8 +91,10 @@ class PacmanEnv(gym.Env):
         # Number of observations/states = no of possible/legal states ()
         # multiplied by the no of actions (4)
         # 10x10(all possible locations) - 36 (wall locations)
-        # 64 possible state
-        self.observation_space = spaces.Discrete(64)
+        # 64 possible states
+        walls_number = np.array2string(self.grid).count('2')
+        legal_states = (10 * 10) - walls_number
+        self.observation_space = spaces.Discrete(legal_states)
 
     def step(self, action):
         '''
@@ -109,9 +111,11 @@ class PacmanEnv(gym.Env):
         4b. Ghost, PC is powered up
 
 
-        Rewards (6):
-        - reward = 0       -> Pacman is alive,
+        Rewards (8):
+        - reward = -1       -> Stepping rewards
         - reward = -1000   -> Pacman is killed by a ghost,
+        - reward = -5       -> Pacman is bumping in wall,
+        - reward = 0       -> Pacman is alive,
         - reward = 10      -> Pacman eats a food piece,
         - reward = 50     -> Pacman eats a special
         - reward = 100     -> Pacman eats a ghost
@@ -119,7 +123,8 @@ class PacmanEnv(gym.Env):
 
         '''
         legal_actions_set(self)
-        reward = 0
+        # Penalty for every step the agent makes
+        reward = -1
         # PC Moving upwards
         if(action == 0):
             return move_up_scenario(self, reward)
@@ -159,3 +164,6 @@ class PacmanEnv(gym.Env):
         Just invokes a new instance of the game
         '''
         self.__init__()
+        states_list = map_states()
+        state_idx = get_state_mapping(self.state, states_list)
+        return state_idx

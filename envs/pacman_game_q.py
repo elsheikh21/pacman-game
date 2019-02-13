@@ -1,137 +1,148 @@
-import numpy as np
 import gym
 import time
+import numpy as np
+import matplotlib.pyplot as plt
+from game_logic import (map_states, get_state_mapping)
 
-env = gym.make('MyPacman-v0')
-observations = env.reset()
-env.render()
 
-print("Action space is: {}".format(env.action_space))
-print("State space is: {}".format(env.observation_space))
+def train_agent(iterations=1000, verbose=False,
+                epsilon=0.1, gamma=0.6, alpha=0.1):
+    '''
+    RL task, where agent's doing Q-learning
+    '''
+    # Used for plotting purposes
+    utilities = []
+    action_space = env.action_space
+    obs_space = env.observation_space
+    if(verbose):
+        print(f"\nAction space: {action_space} & State space: {obs_space} \n")
 
-# First, we'll initialize the Q-table state space x 4 matrix of zeros
-q_table = np.zeros([env.observation_space.n, env.action_space.n])
+    # Define Q-Learning attributes
 
-# Alpha (α): (the learning rate) should decrease as you continue to gain a
-# larger and larger knowledge base.
+    action_size = action_space.n
+    state_size = obs_space.n
+    q_table = np.zeros([state_size, action_size], dtype=np.float)
 
-# Gamma (γ): as you get closer and closer to the deadline, your preference
-# for near-term reward should increase, as you won't be around long enough
-# to get the long-term reward, which means your gamma should decrease.
+    # retraining the trained model
+    # q_table = np.load('q_table.npy')
 
-# Epsilon (ϵ): as we develop our strategy, we have less need of exploration &
-# more exploitation to get more utility from our policy,
-# so as trials increase, epsilon should decrease.
+    # for states mapping
+    states_list = map_states()
 
-# We decide whether to pick a random action or to exploit the
-# already computed Q-values.
-# This is done simply by using the epsilon, and comparing to
-# random.uniform(0, 1)
+    iterations += 1
+    for game in range(1, iterations):
+        utility, epochs = 0, 0
+        state = env.reset()
+        done = False
+        # epsilon greedy experimentation strategy
+        # decay_rate = 1 / game
+        # epsilon *= decay_rate
+        while not done:
+            if np.random.uniform(0, 1) < epsilon:
+                # Explore action space
+                action = env.action_space.sample()
+            else:
+                # Exploit learned values
+                action = np.argmax(q_table[state])
 
-alpha = 0.1
-gamma = 0.6
-epsilon = 0.1
+            state_idx, next_state, reward, done = env.step(action)
+            next_state_idx = get_state_mapping(next_state, states_list)
 
-utilities = []
+            old_val = q_table[state_idx, action]
+            next_max = np.max(q_table[next_state_idx])
 
-for game in range(10000):
-    print("\n**************************************************************")
-    utility = 0
-    state = env.reset()
-    eps = 1.0/np.sqrt(game+1)
-    for t in range(1000):
-        print("\n--- Step #{} - Game #{} ---\n".format(t, game))
-        if (epsilon > np.random.uniform(0, 1)):
-            action = env.action_space.sample()
-        else:
-            # Exploit the learned value
+            new_val = (1 - alpha) * old_val + alpha * \
+                (reward + gamma * next_max)
+            q_table[state_idx, action] = new_val
+
+            utility += reward
+
+            state = next_state_idx
+            epochs += 1
+            time.sleep(0.1)
+
+            if (done):
+                break
+
+        print(f"--- Game = {game} --- Utility = {utility} ---")
+        utilities.append(utility)
+
+        if game % 100 == 0:
+            print_out(utilities, q_table)
+
+    return q_table, utilites
+
+
+def print_out(utilities, q_table):
+    '''
+    Plot the agent's utilities and penalties throughout learning phase
+    '''
+    with open('output.txt', 'w') as f:
+        max_idx = utilities.index(max(utilities))
+        print(utilites[max_idx], file=f)
+        print(q_table, file=f)
+    print('[INFO] data is saved to output.txt')
+
+
+def plot(utilities):
+    plt.plot(utilities)
+    plt.title('Utilities variation while learning')
+    plt.xlabel('Number of iterations')
+    plt.ylabel('Utilities')
+    # Show the plot
+    plt.show()
+
+
+def evaluate_performance(episodes, q_table):
+    '''
+    Evaluate agent's performance after Q-learning
+    '''
+
+    total_epochs = 0
+    # for states mapping
+    states_list = map_states()
+
+    for episode in range(episodes):
+        state = env.reset()
+        epochs, reward = 0, 0
+
+        done = False
+        utility = 0
+        count = 0
+
+        while not done:
+            count += 1
             action = np.argmax(q_table[state])
+            _, next_state, reward, done = env.step(action)
+            next_state_idx = get_state_mapping(next_state, states_list)
+            utility += reward
+            epochs += 1
+            env.render()
+            state = next_state_idx
 
-        next_state, reward, done, info = env.step(action)
+        print(f"Game {episode} is over after {count} with {utility} pts.\n")
 
-        old_value = q_table[state, action]
-        next_max = np.max(q_table[next_state])
+        total_epochs += epochs
 
-        new_value = (1 - alpha) * old_value + alpha * \
-            (reward + gamma * next_max)
-        q_table[state, action] = new_value
-
-        utility += reward
-
-        state = next_state
-
-        print("\n--- Utility = {} - Game Over = {} ---".format(utility, done))
-        env.render()
-        time.sleep(1.0)
-        print("\n-------------------------------------------")
-        if (done):
-            print("Episode done after {} timesteps.\n".format(t+1))
-            break
-    print("**************************************************************\n")
-    utilities.append(utility)
-
-# Evaluate agent's performance after Q-learning
-
-episodes = 100
-total_epochs = 0
-
-for _ in range(episodes):
-    state = env.reset()
-    epochs, reward = 0, 0
-
-    done = False
-    utility = 0
-
-    while not done:
-        action = np.argmax(q_table[state])
-        state, reward, done, info = env.step(action)
-        utility += reward
-        epochs += 1
-
-    total_epochs += epochs
-
-print(f"Results after {episodes} episodes:")
-print(f"Average timesteps per episode: {total_epochs / episodes}")
-print(f"Utility: {utility}")
-
-# env.reset() Resets the environment and returns a random initial state.
-# env.render() Renders one frame of the environment (to visualizing env)
-
-# Action space: set of all the actions that agent can take in a given state.
-
-# env.step(action): Step the environment by one timestep. Returns
-# observation: Observations of the environment
-# reward: If your action was beneficial or not
-# done: Indicates if game terminated, also called one episode
-# info: Additional info such as performance & latency for debugging
+        print(f"Results after {episodes} episodes:")
+        print(f"Average timesteps per episode: {total_epochs / episodes}")
+        print(f"Utility: {utility}")
 
 
-# Q-Learning Process
-# Breaking it down into steps, we get
+# Define the environment
+env = gym.make('MyPacman-v0')
+state = env.reset()
 
-# 1. Initialize the Q-table by all zeros.
-# 2. Start exploring actions: For each state, select any one among all
-#   possible actions for the current state (S).
-# 3. Travel to the next state (S') as a result of that action (a).
-# 4. For all possible actions from the state (S')
-#   select the one with the highest Q-value.
-# 5. Update Q-table values using the equation.
-# 6. Set the next state as the current state.
-# 7. If goal state is reached, then end and repeat the process.
+# if we want to skip the training part just load .npy file
+# pretrained_q_table = np.load('q_table.npy')
 
-'''
-After enough random exploration of actions, the Q-values tend to converge
-serving our agent as an action-value function which it can exploit to pick the
-most optimal action from a given state.
 
-There's a tradeoff between exploration (choosing a random action) and
-exploitation (choosing actions based on already learned Q-values).
-We want to prevent the action from always taking the same route, and possibly
-overfitting, so we'll be introducing another parameter called ϵ "epsilon"
-to cater to this during training.
+q_table, utilites = train_agent(iterations=1000, verbose=False,
+                                epsilon=0.1, gamma=0.6, alpha=0.1)
 
-Instead of just selecting the best learned Q-value action, we'll sometimes
-favor exploring the action space further. Lower epsilon value results in
-episodes with more penalties (on average) which is obvious because we are
-exploring and making random decisions.
-'''
+# Saving q_table for further use
+np.save('q_table.npy', q_table)
+
+plot(utilites)
+
+evaluate_performance(episodes=100, q_table=q_table)
