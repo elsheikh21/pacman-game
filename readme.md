@@ -8,7 +8,7 @@
 
 ---
 
-- Note: No graphical rendering was used. However, for visualizing how it will be rendered check the [random agent output for first 6 steps](docs/random_agent_output.py)
+- Note: No graphical rendering was used. However, for visualizing how it will be rendered check the ![random agent output for first 6 steps](docs/random_agent_output.gif)
 
 ---
 
