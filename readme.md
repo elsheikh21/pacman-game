@@ -4,7 +4,7 @@
 
 1. Build customized pacman game using native python libraries, and openai gym, [my_pacman.py](envs/my_pacman.py)
 2. Develop a random agent, implemented [pacman_game.py](envs/pacman_game.py)
-3. Develop another agent that uses `Value Iteration` to achieve max utility, implemented here [pacman_game_q.py](envs/pacman_game.py)
+3. Develop another agent that uses `Value Iteration` to achieve max utility, implemented here [pacman_game_q.py](envs/pacman_game_q.py)
 
 ---
 
