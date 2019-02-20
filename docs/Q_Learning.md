@@ -15,6 +15,7 @@
 ![Visually explained Q-Learning](q-learning-algorithm.png)
 
 How we Update the q-table?
+<br/>
 Simply by using Q-function
 
 ![Q-function](q-function.png)
@@ -56,3 +57,13 @@ Simply by using Q-function
 
 - Action space: set of all the actions that agent can take in a given state.
 - Observation space: set of all legal states agent can visit
+
+## Implementation
+
+Step 1: initialize the Q-Table with zeros, There are n columns, where n= number of actions. There are m rows, where m= number of states.
+
+Steps 2 and 3: choose and perform an action, implemented using Epsilon Greedy strategy.
+
+Steps 4 and 5: evaluate, agent taken an action and observed an outcome and reward. We need to update the function Q(s,a).
+
+![Update Q(s, a)](new-q.png)
