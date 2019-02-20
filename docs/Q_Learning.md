@@ -12,6 +12,17 @@
 6. Set the next state as the current state.
 7. If goal state is reached, then end and repeat the process.
 
+![Visually explained Q-Learning](q-learning-algorithm.png)
+
+How we Update the q-table?
+Simply by using Q-function
+
+![Q-function](q-function.png)
+
+- Q-table: just a fancy name for a simple lookup table where we calculate
+  the maximum expected future rewards for action at each state.
+  Basically, this table will guide us to the best action at each state.
+
 - Alpha (α): (the learning rate) should decrease as you continue to gain a
   larger and larger knowledge base.
 
